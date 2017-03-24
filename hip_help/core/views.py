@@ -77,8 +77,37 @@ def refresh_token(installation):
 @csrf_exempt
 def listener(request):
     message = json.loads(request.body.decode('utf-8'))
+    room_id = message['item']['room']['id']
+
+    keyword = message['item']['message']['message']
+    keyword = keyword.split()[1]
+
+    installation = core_models.Installation.objects.get(room_id=room_id)
+    answer = installation.find_answer(keyword)
+
+    if answer is not None:
+        send_message(answer, installation)
+    else:
+        send_message('help message for "{keyword}" not found'.format(keyword=keyword), installation)
+
     return HttpResponse(status=204)
 
+
+def send_message(message, installation):
+    token = get_token(installation)
+    notification_url = installation.api_url + 'room/' + str(installation.room_id) + '/notification'
+    response = requests.post(
+        url=notification_url,
+        headers={
+            'Authorization': 'Bearer ' + token.token
+        },
+        data={
+            'message_format': 'text',
+            'message': message,
+            'notify': False,
+            'color': 'gray'
+        }
+    )
 
 #todo test
 # todo move to model
