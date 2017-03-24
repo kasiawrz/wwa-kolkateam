@@ -119,9 +119,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+ROOT = 'https://f5d00708.ngrok.io'
 
 
-def GET_CAPABILITIES(root, help, self, installed):
+def GET_CAPABILITIES(help, self, installed, root=ROOT):
     return {
         "name": "HipHelp",
         "description": "Addon that automate answering FAQ",
