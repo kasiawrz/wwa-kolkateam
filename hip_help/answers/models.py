@@ -3,9 +3,12 @@ from django.db.models import Q
 
 
 class Answer(models.Model):
-    keyword = models.CharField(max_length=30, unique=True)
+    keyword = models.CharField(max_length=30)
     text = models.TextField()
     installation = models.ForeignKey('core.Installation')
+
+    class Meta:
+        unique_together = ('installation', 'keyword')
 
     def __str__(self):
         return self.keyword
