@@ -24,8 +24,9 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ROOT = 'https://f5d00708.ngrok.io'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['f5d00708.ngrok.io']
 
 
 # Application definition
@@ -119,7 +120,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-ROOT = 'https://f5d00708.ngrok.io'
 
 
 def GET_CAPABILITIES(help, self, installed, root=ROOT):
@@ -128,8 +128,8 @@ def GET_CAPABILITIES(help, self, installed, root=ROOT):
         "description": "Addon that automate answering FAQ",
         "key": "hip-help",
         "links": {
-            "homepage": "{root}/{help}".format(root=root, help=help),
-            "self": "{root}/{self}".format(root=root, self=self)
+            "homepage": "{root}{help}".format(root=root, help=help),
+            "self": "{root}{self}".format(root=root, self=self)
         },
         "vendor": {
             "name": "Atlassian",
@@ -145,7 +145,7 @@ def GET_CAPABILITIES(help, self, installed, root=ROOT):
             "installable": {
                 "allowGlobal": False,
                 "allowRoom": True,
-                "callbackUrl": "{root}/{installed}".format(root=root,
+                "callbackUrl": "{root}{installed}".format(root=root,
                                                            installed=installed)
             }
         }
