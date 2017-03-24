@@ -15,10 +15,12 @@ from . import models as core_models
 @require_GET
 @csrf_exempt
 def capabilities(request):
-    capabilities_data = settings.GET_CAPABILITIES(reverse('help'), reverse('capabilities'),
-                                             reverse('installed'))
+    capabilities_data = settings.GET_CAPABILITIES(
+        reverse('help'), reverse('capabilities'),
+        reverse('installed'), reverse('listener')
+    )
 
-    return JsonResponse(capabilities_data)
+    return JsonResponse(capabilities_data, status=200)
 
 
 @require_POST
@@ -35,7 +37,6 @@ def installed(request):
 
     response = requests.get(installation_data['capabilitiesUrl'])
     capabilities_data = response.json()
-
     installation.authorization_url = capabilities_data['capabilities']['oauth2Provider']['authorizationUrl']
     installation.token_url = capabilities_data['capabilities']['oauth2Provider']['tokenUrl']
     installation.api_url = capabilities_data['capabilities']['hipchatApiProvider']['url']
@@ -45,6 +46,7 @@ def installed(request):
     return HttpResponse(status=200)
 
 
+# todo move to model
 def refresh_token(installation):
     # sets new token to installation and returns it
     if installation.has_token():
@@ -70,11 +72,21 @@ def refresh_token(installation):
 
     return token_object
 
+
+@require_POST
+@csrf_exempt
+def listener(request):
+    message = json.loads(request.body.decode('utf-8'))
+    return HttpResponse(status=204)
+
+
 #todo test
+# todo move to model
 def is_expired(token):
     return timezone.now() > token.expiration_timestamp
 
 
+# todo move to model
 def get_token(installation):
     if not installation.has_token() or is_expired(installation.accesstoken):  # checking if installation has token
         return refresh_token(installation)

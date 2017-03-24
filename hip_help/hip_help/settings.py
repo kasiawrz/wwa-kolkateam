@@ -123,7 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-def GET_CAPABILITIES(help, self, installed, root=ROOT):
+def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
     return {
         "name": "HipHelp",
         "description": "Addon that automate answering FAQ",
@@ -148,6 +148,15 @@ def GET_CAPABILITIES(help, self, installed, root=ROOT):
                 "allowRoom": True,
                 "callbackUrl": "{root}{installed}".format(root=root,
                                                            installed=installed)
-            }
+            },
+            "webhook": [
+                {
+                    "url": "{root}{listener}".format(root=root, listener=listener),
+                    "event": "room_message",
+                    "pattern": "/helpme .*",
+                    "name": "Listener",
+                    "authentication": "jwt"
+                }
+            ]
         }
     }
