@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class Installation(models.Model):
@@ -11,6 +12,20 @@ class Installation(models.Model):
     authorization_url = models.URLField(blank=True)
     token_url = models.URLField(blank=True)
     api_url = models.URLField(blank=True)
+
+    def find_match(self, sentence):
+        query = Q()
+        initial_queryset = self.answers.all()
+        for word in sentence.split():
+            query |= Q(keyword=word)
+        queryset = initial_queryset.filter(query).distinct()
+        return [q.keyword for q in queryset]
+
+    def find_answer(self, keyword):
+        try:
+            return self.answers.get(keyword=keyword).text
+        except models.ObjectDoesNotExist:
+            pass
 
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
