@@ -12,6 +12,9 @@ class Installation(models.Model):
     token_url = models.URLField(blank=True)
     api_url = models.URLField(blank=True)
 
+    def has_token(self):
+        return AccessToken.objects.filter(installation=self).exists()
+
 
 class AccessToken(models.Model):
     installation = models.OneToOneField('Installation')

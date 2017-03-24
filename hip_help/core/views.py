@@ -47,7 +47,7 @@ def installed(request):
 
 def refresh_token(installation):
     # sets new token to installation and returns it
-    if installation.accesstoken:
+    if installation.has_token():
         installation.accesstoken.delete()
 
     auth = {
@@ -70,15 +70,13 @@ def refresh_token(installation):
 
     return token_object
 
-
+#todo test
 def is_expired(token):
     return timezone.now() > token.expiration_timestamp
 
 
 def get_token(installation):
-    if installation.accesstoken:  # checking if installation has token
-        return refresh_token(installation)
-    elif is_expired(installation.accesstoken):
+    if not installation.has_token() or is_expired(installation.accesstoken):  # checking if installation has token
         return refresh_token(installation)
     else:
         return installation.accesstoken
