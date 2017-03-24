@@ -119,3 +119,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+def GET_CAPABILITIES(root, help, self, installed):
+    return {
+        "name": "HipHelp",
+        "description": "Addon that automate answering FAQ",
+        "key": "hip-help",
+        "links": {
+            "homepage": "{root}/{help}",
+            "self": "{root}/{self}"
+        },
+        "vendor": {
+            "name": "Atlassian",
+            "url": "https://www.atlassian.com/"
+        },
+        "capabilities": {
+            "hipchatApiConsumer": {
+                "fromName": "HipHelp",
+                "scopes": [
+                    "send_notification"
+                ]
+            },
+            "installable": {
+                "allowGlobal": False,
+                "allowRoom": True,
+                "callbackUrl": "{root}/{installed}"
+            }
+        }
+    }
