@@ -128,8 +128,8 @@ def GET_CAPABILITIES(help, self, installed, root=ROOT):
         "description": "Addon that automate answering FAQ",
         "key": "hip-help",
         "links": {
-            "homepage": "{root}/{help}",
-            "self": "{root}/{self}"
+            "homepage": "{root}/{help}".format(root=root, help=help),
+            "self": "{root}/{self}".format(root=root, self=self)
         },
         "vendor": {
             "name": "Atlassian",
@@ -145,7 +145,8 @@ def GET_CAPABILITIES(help, self, installed, root=ROOT):
             "installable": {
                 "allowGlobal": False,
                 "allowRoom": True,
-                "callbackUrl": "{root}/{installed}"
+                "callbackUrl": "{root}/{installed}".format(root=root,
+                                                           installed=installed)
             }
         }
     }
