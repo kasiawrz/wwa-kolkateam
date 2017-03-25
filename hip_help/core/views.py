@@ -1,7 +1,7 @@
 import requests
 import json
 
-from django.shortcuts import reverse
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
@@ -15,10 +15,9 @@ from . import models as core_models
 @csrf_exempt
 def capabilities(request):
     capabilities_data = settings.GET_CAPABILITIES(
-        reverse('help'), reverse('capabilities'),
-        reverse('installed'), reverse('listener'), reverse('uninstalled')
+        reverse_lazy('help'), reverse_lazy('capabilities'),
+        reverse_lazy('installed'), reverse_lazy('listener'), reverse_lazy('uninstalled')
     )
-
     return JsonResponse(capabilities_data, status=200)
 
 
@@ -58,7 +57,6 @@ def installed(request):
 
 @csrf_exempt
 def uninstalled(request):
-    print('dddddddddddddddddddddddddddddddddddddddddd')
     redirect_url = request.GET.get('redirect_url', None)
     installable_url = request.GET.get('installable_url', None)
     response = requests.get(installable_url)
@@ -74,10 +72,20 @@ def listener(request):
     room_id = message['item']['room']['id']
 
     keyword = message['item']['message']['message']
-    keywords = keyword.split()[1:]
-
     installation = core_models.Installation.objects.get(room_id=room_id)
 
+    if keyword.split()[0] == '/helpme':  # obligated to answer
+        keywords = keyword.split()[1:]
+        return help_me(keywords, installation)
+    else:  # may answer
+        suggestion = installation.make_suggestion(keyword)
+        if suggestion is not None:
+            installation.send_message('do you want information about {suggestion}? write /helpme {suggestion}'.format(suggestion=suggestion.keyword))
+
+        return HttpResponse(status=204)
+
+
+def help_me(keywords, installation):
     if len(keywords) > 1 and keywords[0] == 'like':
         keyword = ' '.join(keywords[1:])
         answer = installation.find_answer(keyword)  # everything except "like"
@@ -116,7 +124,7 @@ def home(request):
     room = core_models.Installation.objects.first()
     if not room:
         return HttpResponse('<h1>No rooms stats</h1>')
-    return HttpResponseRedirect(reverse('summary', args=(room.room_name,)))
+    return HttpResponseRedirect(reverse_lazy('summary', args=(room.room_name,)))
 
 
 def help(request):

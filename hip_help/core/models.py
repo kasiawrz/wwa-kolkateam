@@ -1,9 +1,12 @@
 import datetime
+
+import nltk
 import requests
 
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from textblob import TextBlob
 
 
 class Installation(models.Model):
@@ -32,6 +35,48 @@ class Installation(models.Model):
         except models.ObjectDoesNotExist:
             pass
 
+    def make_suggestion(self, sentence):
+        grammar = "NP: {<JJ>*<NN>+}"
+        text = TextBlob(sentence)
+        cp = nltk.RegexpParser(grammar)
+        candidates = []
+        for item in cp.parse(text.tags):
+            self.traverse_nltk_item(item, candidates)
+        print(candidates)
+        candidate_answers = self.answers.filter(keyword__in=candidates)
+        if candidate_answers.exists():
+            most_asked = candidate_answers.order_by('-ask_count').first()
+        else:
+            most_asked = None
+
+        return most_asked
+
+    def traverse_nltk_item(self, item, candidates):
+
+        if isinstance(item, list):
+            if item._label == 'NP':
+                merged_candidates = []
+                self.merge_leafs(item, merged_candidates)
+                print(merged_candidates)
+                candidates.append(' '.join(merged_candidates))
+
+            for nested_item in item:
+                self.traverse_nltk_item(nested_item, candidates)
+        elif isinstance(item, tuple):
+            word, kind = item
+            if kind in ['NN', 'NNP']:
+                candidates.append(word)
+        elif isinstance(item, nltk.tree.Tree):
+            self.traverse_nltk_item(item, candidates)
+
+    def merge_leafs(self, item, candidates):
+        if isinstance(item, list):
+            for list_item in item:
+                if isinstance(list_item, tuple):
+                    candidates.append(list_item[0])
+        elif isinstance(item, tuple):
+            candidates.append(item[0])
+
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
 
@@ -41,7 +86,6 @@ class Installation(models.Model):
             'Authorization': 'Bearer ' + token.token
         })
         room = response.json()
-        print(room)
         return room['name']
 
     def set_room_name(self):
