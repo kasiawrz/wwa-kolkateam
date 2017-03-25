@@ -9,8 +9,8 @@ from . import views
 class Installation(models.Model):
     oauth_id = models.CharField(max_length=100)
     capabilities_url = models.CharField(max_length=100)
-    room_id = models.IntegerField()
-    room_name = models.CharField(max_length=100)
+    room_id = models.IntegerField(unique=True)
+    room_name = models.CharField(max_length=100, unique=True)
     group_id = models.IntegerField()
     oauth_secret = models.CharField(max_length=100)
 
