@@ -41,6 +41,7 @@ class Installation(models.Model):
             'Authorization': 'Bearer ' + token.token
         })
         room = response.json()
+        print(room)
         return room['name']
 
     def set_room_name(self):
