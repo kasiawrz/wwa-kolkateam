@@ -26,7 +26,7 @@ class Answer(models.Model):
         self.save()
 
     def dislike(self):
-        self.likes_count -= 1
+        self.dislikes_count += 1
         self.save()
 
     @classmethod
