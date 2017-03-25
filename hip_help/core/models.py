@@ -77,13 +77,6 @@ class Installation(models.Model):
         elif isinstance(item, tuple):
             candidates.append(item[0])
 
-
-
-
-
-
-
-
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
 
@@ -93,7 +86,6 @@ class Installation(models.Model):
             'Authorization': 'Bearer ' + token.token
         })
         room = response.json()
-        print(room)
         return room['name']
 
     def set_room_name(self):
