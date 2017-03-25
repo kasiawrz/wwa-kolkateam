@@ -1,13 +1,12 @@
 import requests
-import datetime
 import json
 
 from django.shortcuts import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.conf import settings
-from django.utils import timezone
 
 from . import models as core_models
 
@@ -27,6 +26,13 @@ def capabilities(request):
 def installed(request):
     if request.method == 'DELETE':
         return HttpResponse(status=200)
+    elif not request.body:
+        redirect_url = request.GET.get('redirect_url', None)
+        installable_url = request.GET.get('installable_url', None)
+        response = requests.get(installable_url)
+        installation = response.json()
+        core_models.Installation.objects.get(oauth_id=installation['oauthId']).delete()
+        return HttpResponseRedirect(redirect_url)
 
     installation_data = json.loads(request.body.decode('utf-8'))
     installation = core_models.Installation(
@@ -52,40 +58,13 @@ def installed(request):
 
 @csrf_exempt
 def uninstalled(request):
-    print('kkkk')
+    print('dddddddddddddddddddddddddddddddddddddddddd')
     redirect_url = request.GET.get('redirect_url', None)
     installable_url = request.GET.get('installable_url', None)
     response = requests.get(installable_url)
     installation = response.json()
     core_models.Installation.objects.get(oauth_id=installation['oauthId']).delete()
     return HttpResponseRedirect(redirect_url)
-
-
-# todo move to model
-def refresh_token(installation):
-    # sets new token to installation and returns it
-    if installation.has_token():
-        installation.accesstoken.delete()
-
-    auth = {
-        'username': installation.oauth_id,
-        'password': installation.oauth_secret
-    }
-    data = {
-        'grant_type': 'client_credentials'
-    }
-
-    url = installation.token_url
-    response = requests.post(url, data, auth=(auth['username'], auth['password']))
-    token = response.json()
-
-    token_object = core_models.AccessToken.objects.create(
-        installation=installation,
-        token=token['access_token'],
-        expiration_timestamp=timezone.now() + datetime.timedelta(seconds=int(token['expires_in']))
-    )
-
-    return token_object
 
 
 @require_POST
@@ -105,9 +84,9 @@ def listener(request):
 
         if answer is not None:
             answer.like()
-            send_message('you liked "{keyword}"'.format(keyword=keyword), installation)
+            installation.send_message('you liked "{keyword}"'.format(keyword=keyword))
         else:
-            send_message('"{keyword}" not found'.format(keyword=keyword), installation)
+            installation.send_message('"{keyword}" not found'.format(keyword=keyword))
 
     elif len(keywords) > 1 and keywords[0] == 'dislike':
         keyword = ' '.join(keywords[1:])
@@ -115,16 +94,16 @@ def listener(request):
 
         if answer is not None:
             answer.dislike()
-            send_message('you disliked "{keyword}"'.format(keyword=keyword), installation)
+            installation.send_message('you disliked "{keyword}"'.format(keyword=keyword))
         else:
-            send_message('"{keyword}" not found'.format(keyword=keyword), installation)
+            installation.send_message('"{keyword}" not found'.format(keyword=keyword))
     else:
         keyword = ' '.join(keywords)
         answer = installation.find_answer(keyword)
         if answer is not None:
-            send_message(answer.text, installation)
+            installation.send_message(answer.text)
         else:
-            send_message('help message for "{keyword}" not found'.format(keyword=keyword), installation)
+            installation.send_message('help message for "{keyword}" not found'.format(keyword=keyword))
 
     if answer:
         answer.increment_ask_counter()
@@ -132,35 +111,13 @@ def listener(request):
     return HttpResponse(status=204)
 
 
-def send_message(message, installation):
-    token = get_token(installation)
-    notification_url = installation.api_url + 'room/' + str(installation.room_id) + '/notification'
-    response = requests.post(
-        url=notification_url,
-        headers={
-            'Authorization': 'Bearer ' + token.token
-        },
-        data={
-            'message_format': 'text',
-            'message': message,
-            'notify': False,
-            'color': 'gray'
-        }
-    )
-
-#todo test
-# todo move to model
-def is_expired(token):
-    return timezone.now() > token.expiration_timestamp
-
-
-# todo move to model
-def get_token(installation):
-    if not installation.has_token() or is_expired(installation.accesstoken):  # checking if installation has token
-        return refresh_token(installation)
-    else:
-        return installation.accesstoken
+@login_required(login_url='/hip-help/admin/login/')
+def home(request):
+    room = core_models.Installation.objects.first()
+    if not room:
+        return HttpResponse('<h1>No rooms stats</h1>')
+    return HttpResponseRedirect(reverse('summary', args=(room.room_name,)))
 
 
 def help(request):
-    pass
+    return HttpResponse('Help')

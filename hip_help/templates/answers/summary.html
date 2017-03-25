@@ -7,7 +7,8 @@
     <title>Hipchat Help Me - Admin View</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 
     <!-- Chart.js library -->
@@ -35,6 +36,7 @@
 </head>
 <body>
 <section>
+    <a href="{% url 'fetch-data' %}" class="btn btn-success">fetch data from repository for all rooms</a>
     <div class="row">
         <div class="col-xs-4">
             <input list="room_name" class="col-xs-4 form-control" placeholder="room selector">
@@ -45,7 +47,7 @@
         </div>
 
         <div>
-        <button class="btn btn-info">refresh</button>
+            <button class="btn btn-info">refresh</button>
         </div>
     </div>
 
@@ -63,13 +65,13 @@
             </thead>
             <tbody>
             {% for answer in answers %}
-            <tr>
-                <th>{{forloop.counter}}</th>
-                <td>{{answer.keyword}}</td>
-                <td>{{answer.likes_count}}</td>
-                <td>{{answer.dislikes_count}}</td>
-                <td>{{answer.ask_count}}</td>
-            </tr>
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ answer.keyword }}</td>
+                    <td>{{ answer.likes_count }}</td>
+                    <td>{{ answer.dislikes_count }}</td>
+                    <td>{{ answer.ask_count }}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
@@ -114,11 +116,11 @@
 
     //chart with the number of requests
     var data = {
-            labels : [
-                {% for answer in answers %}
-                    "{{answer.keyword}}",
-                {% endfor %}
-            ],
+        labels: [
+            {% for answer in answers %}
+                "{{answer.keyword}}",
+            {% endfor %}
+        ],
 
         datasets : [
             {
@@ -158,57 +160,57 @@
             //String - Colour of the scale line
             scaleLineColor: "rgba(20,20,20,.7)",
 
-            //Number - Pixel width of the scale line
-            scaleLineWidth: 1,
+        //Number - Pixel width of the scale line
+        scaleLineWidth : 1,
 
-            //Boolean - Whether to show labels on the scale
-            scaleShowLabels: true,
+        //Boolean - Whether to show labels on the scale
+        scaleShowLabels : true,
 
-            //Interpolated JS string - can access value
-            scaleLabel: "<%=value%>",
+        //Interpolated JS string - can access value
+        scaleLabel : "<%=value%>",
 
-            //String - Scale label font declaration for the scale label
-            scaleFontFamily: "'Arial'",
+        //String - Scale label font declaration for the scale label
+        scaleFontFamily : "'Arial'",
 
             //Number - Scale label font size in pixels
             scaleFontSize: 12,
 
-            //String - Scale label font weight style
-            scaleFontStyle: "normal",
+        //String - Scale label font weight style
+        scaleFontStyle : "normal",
 
-            //String - Scale label font colour
-            scaleFontColor: "#666",
+        //String - Scale label font colour
+        scaleFontColor : "#666",
 
-            ///Boolean - Whether grid lines are shown across the chart
-            scaleShowGridLines: true,
+        ///Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines : true,
 
-            //String - Colour of the grid lines
-            scaleGridLineColor: "rgba(0,0,0,.3)",
+        //String - Colour of the grid lines
+        scaleGridLineColor : "rgba(0,0,0,.3)",
 
-            //Number - Width of the grid lines
-            scaleGridLineWidth: 1,
+        //Number - Width of the grid lines
+        scaleGridLineWidth : 1,
 
-            //Boolean - Whether the line is curved between points
-            bezierCurve: true,
+        //Boolean - Whether the line is curved between points
+        bezierCurve : true,
 
-            //Boolean - Whether to show a dot for each point
-            pointDot: true,
+        //Boolean - Whether to show a dot for each point
+        pointDot : true,
 
-            //Number - Radius of each point dot in pixels
-            pointDotRadius: 5,
+        //Number - Radius of each point dot in pixels
+        pointDotRadius : 5,
 
-            //Number - Pixel width of point dot stroke
-            pointDotStrokeWidth: 1,
+        //Number - Pixel width of point dot stroke
+        pointDotStrokeWidth : 1,
 
-            //Boolean - Whether to show a stroke for datasets
-            datasetStroke: true,
+        //Boolean - Whether to show a stroke for datasets
+        datasetStroke : true,
 
-            //Number - Pixel width of dataset stroke
-            datasetStrokeWidth: 2,
+        //Number - Pixel width of dataset stroke
+        datasetStrokeWidth : 2,
 
-            //Boolean - Whether to fill the dataset with a colour
-            datasetFill: true
-        };
+        //Boolean - Whether to fill the dataset with a colour
+        datasetFill : true
+    };
 
 
         //Get context with jQuery - using jQuery's .get() method.
@@ -337,15 +339,15 @@
 
 
 
-    $(function() {
+    $(function () {
 
         var rooms = [
             {% for room in rooms %}
-                [{{forloop.counter}}, {{room.room_name}}],
+                [{{forloop.counter}}, '{{room.room_name}}'],
             {% endfor %}
         ];
 
-        for (var i=0; i < rooms.length; i++) {
+        for (var i = 0; i < rooms.length; i++) {
 
             var option = document.createElement('option');
             option.setAttribute('value', rooms[i][1]);
@@ -355,12 +357,14 @@
 
         }
 
-        $('button').on('click', function(e){
+        $('button').on('click', function (e) {
 
             var datalist = document.getElementById('room_name'),
                 inputVal = document.querySelector('input').value;
-
-            window.location.href='/hip-help/summary/' + inputVal;
+            if (inputVal)
+                window.location.href = '/hip-help/summary/' + inputVal;
+            else
+                window.location.reload();
         })
     })
 
