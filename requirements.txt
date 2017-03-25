@@ -5,3 +5,4 @@ pyparsing==2.2.0
 requests==2.13.0
 six==1.10.0
 Faker==0.7.10
+GitPython==2.1.3

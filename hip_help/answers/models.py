@@ -16,21 +16,21 @@ class Answer(models.Model):
 
     class Meta:
         unique_together = ('installation', 'keyword')
-    #
-    # @classmethod
-    # def save_records(cls, records_dict):
-    #     cls.objects.all().delete()
-    #     room_name_set = set()
-    #     for room_name, _ in records_dict:
-    #         room_name_set.add(room_name)
-    #     room_name_list = list(room_name_set)
-    #     room_objects = Installation.objects.filter(group_id__in=int(room_name_list))
-    #     room_dict = {room.room_name: room.room_id for room_objects}
 
-    # TODO optimize and change for real room names (ids currently)
+    def increment_ask_counter(self):
+        self.ask_count += 1
+        self.save()
+
+    def like(self):
+        self.likes_count += 1
+        self.save()
+
+    def dislike(self):
+        self.likes_count -= 1
+        self.save()
+
     @classmethod
     def save_records(cls, records_dict):
-        cls.objects.all().delete()
         for room_id, answers_list in records_dict.items():
             try:
                 room = Installation.objects.get(room_id=int(room_id))
@@ -38,13 +38,21 @@ class Answer(models.Model):
                 continue
 
             answer_object_list = []
+            file_room_keywords = {answer['keyword'] for answer in answers_list}
+            database_room_keywords = {answer.keyword for answer in room.answers.all()}
+            keywords_to_create = file_room_keywords - database_room_keywords
+            keywords_to_delete = database_room_keywords - file_room_keywords
+
             for answer in answers_list:
+                if answer['keyword'] not in keywords_to_create:
+                    continue
                 answer_object_list.append(Answer(
                     installation=room,
                     keyword=answer['keyword'],
                     text=answer['text']
                 ))
             cls.objects.bulk_create(answer_object_list)
+            room.answers.filter(keyword__in=list(keywords_to_delete)).delete()
 
     @classmethod
     def fetch_data_from_file(cls, filename):

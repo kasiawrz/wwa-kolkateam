@@ -28,7 +28,7 @@ class Installation(models.Model):
 
     def find_answer(self, keyword):
         try:
-            return self.answers.get(keyword=keyword).text
+            return self.answers.get(keyword=keyword)
         except models.ObjectDoesNotExist:
             pass
 
