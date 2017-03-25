@@ -322,7 +322,7 @@
 
         var rooms = [
             {% for room in rooms %}
-                [{{forloop.counter}}, {{room.room_name}}],
+                [{{forloop.counter}}, '{{room.room_name}}'],
             {% endfor %}
         ];
 
