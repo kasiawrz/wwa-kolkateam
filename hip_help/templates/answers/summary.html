@@ -221,10 +221,7 @@
         var ctx = $("#requests").get(0).getContext("2d");
 
 
-        if (data.datasets === NaN || data.datasets === undefined) {
-
-        }
-        else {
+        if (!(data.datasets === NaN || data.datasets === undefined)) {
             new Chart(ctx).Line(data, options);
         }
     }
@@ -366,12 +363,9 @@
         var ctx = $("#likes").get(0).getContext("2d");
 
 
-         if (data2.datasets === NaN || data.datasets === undefined) {
-
-        }
-        else {
-            new Chart(ctx).Line(data2, options2);
-        }
+         if (!(data2.datasets === NaN || data2.datasets === undefined)) {
+             new Chart(ctx).Line(data2, options2);
+         }
     }
 
     secondChart();
