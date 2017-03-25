@@ -29,9 +29,9 @@ class Answer(models.Model):
 
     @classmethod
     def save_records(cls, records_dict):
-        for room_id, answers_list in records_dict.items():
+        for room_name, answers_list in records_dict.items():
             try:
-                room = Installation.objects.get(room_id=int(room_id))
+                room = Installation.objects.get(room_name=room_name)
             except models.ObjectDoesNotExist:
                 continue
 
