@@ -1,7 +1,7 @@
 import requests
 import json
 
-from django.shortcuts import reverse
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
@@ -15,10 +15,9 @@ from . import models as core_models
 @csrf_exempt
 def capabilities(request):
     capabilities_data = settings.GET_CAPABILITIES(
-        reverse('help'), reverse('capabilities'),
-        reverse('installed'), reverse('listener'), reverse('uninstalled')
+        reverse_lazy('help'), reverse_lazy('capabilities'),
+        reverse_lazy('installed'), reverse_lazy('listener'), reverse_lazy('uninstalled')
     )
-
     return JsonResponse(capabilities_data, status=200)
 
 
@@ -58,7 +57,6 @@ def installed(request):
 
 @csrf_exempt
 def uninstalled(request):
-    print('dddddddddddddddddddddddddddddddddddddddddd')
     redirect_url = request.GET.get('redirect_url', None)
     installable_url = request.GET.get('installable_url', None)
     response = requests.get(installable_url)
@@ -116,7 +114,7 @@ def home(request):
     room = core_models.Installation.objects.first()
     if not room:
         return HttpResponse('<h1>No rooms stats</h1>')
-    return HttpResponseRedirect(reverse('summary', args=(room.room_name,)))
+    return HttpResponseRedirect(reverse_lazy('summary', args=(room.room_name,)))
 
 
 def help(request):

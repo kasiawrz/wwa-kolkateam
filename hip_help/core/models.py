@@ -1,9 +1,12 @@
 import datetime
+
+import nltk
 import requests
 
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from textblob import TextBlob
 
 
 class Installation(models.Model):
@@ -31,6 +34,20 @@ class Installation(models.Model):
             return self.answers.get(keyword=keyword)
         except models.ObjectDoesNotExist:
             pass
+
+    def make_suggestion(self, sentence):
+        grammar = "NP: {<JJ>*<NN>+}"
+        text = TextBlob(sentence)
+        cp = nltk.RegexpParser(grammar)
+        candidates = []
+        for word, kind in cp.parse(text.tags):
+            if kind in ['NN', 'NNP']:
+                candidates.append(word)
+        candidate_answers = self.answers.filter(keyword__in=candidates)
+        most_asked = candidate_answers.order_by('-ask_count').first()
+        return most_asked
+
+
 
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
