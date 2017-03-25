@@ -5,51 +5,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Hipchat Help Me - Admin View</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+    <!-- Chart.js library -->
+    <script type="text/javascript" src="http://www.chartjs.org/assets/Chart.js"></script>
+
+
+
+    <style>
+        * {
+            margin: 10px;
+        }
+
+        table {
+            width: 90vw;
+            margin: 30px auto;
+        }
+
+        #visualization {
+            width: 90vw;
+            align-items: center;
+        }
+    </style>
 
 
 </head>
 <body>
-    <section>
+<section>
+    <div class="row">
+        <div class="col-xs-4">
+            <input list="room_name" class="col-xs-4 form-control" placeholder="room selector">
 
-        <input list="room_name">
+            <datalist id="room_name">
 
-        <datalist id="room_name">
-
-        </datalist>
-        <button>refresh</button>
-
-
-        <div class="table-hover">
-           <table>
-               <tr>
-                   <th>#</th>
-                   <th>Key</th>
-                   <th>Likes</th>
-                   <th>Dislikes</th>
-                   <th>Number of requests</th>
-               </tr>
-               {% for answer in answers %}
-               <tr>
-                   <th></th>
-                   <td>{{answer.keyword}}</td>
-                   <td>{{answer.likes_count}}</td>
-                   <td>{{answer.dislikes_count}}</td>
-                   <td>{{answer.ask_count}}</td>
-               </tr>
-               {% endfor %}
-           </table>
+            </datalist>
         </div>
-    </section>
+
+        <div>
+        <button class="btn btn-info">refresh</button>
+        </div>
+    </div>
+
+
+    <div>
+        <table class="table">
+            <thead class="thead-default">
+            <tr>
+                <th>#</th>
+                <th>Key</th>
+                <th>Likes</th>
+                <th>Dislikes</th>
+                <th>Number of requests</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for answer in answers %}
+            <tr>
+                <th>{{forloop.counter}}</th>
+                <td>{{answer.keyword}}</td>
+                <td>{{answer.likes_count}}</td>
+                <td>{{answer.dislikes_count}}</td>
+                <td>{{answer.ask_count}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <canvas id="myChart" width="500" height="300"></canvas>
+
+
+</section>
+
 
 <script>
+
+    //chart
+    var data = {
+        labels : [
+        {% for answer in answers %}
+    "{{answer.keyword}}",
+    {% endfor %}
+    ],
+
+    datasets : [
+        {
+            fillColor : "rgba(252,233,79,0.5)",
+            strokeColor : "rgba(82,75,25,1)",
+            pointColor : "rgba(166,152,51,1)",
+            pointStrokeColor : "#fff",
+            data :  [
+            {% for answer in answers %}
+        "{{answer.ask_count}}",
+        {% endfor %}
+        ]
+    }
+    ]
+    }
+
+
+    var options={
+        //Boolean - If we show the scale above the chart data
+        scaleOverlay : false,
+
+        //Boolean - If we want to override with a hard coded scale
+        scaleOverride : true,
+
+        //** Required if scaleOverride is true **
+        //Number - The number of steps in a hard coded scale
+        scaleSteps : 14,
+        //Number - The value jump in the hard coded scale
+        scaleStepWidth : 80,
+        //Number - The scale starting value
+        scaleStartValue : 200,
+        //String - Colour of the scale line
+        scaleLineColor : "rgba(20,20,20,.7)",
+
+        //Number - Pixel width of the scale line
+        scaleLineWidth : 1,
+
+        //Boolean - Whether to show labels on the scale
+        scaleShowLabels : true,
+
+        //Interpolated JS string - can access value
+        scaleLabel : "<%=value%>",
+
+        //String - Scale label font declaration for the scale label
+        scaleFontFamily : "'Arial'",
+
+        //Number - Scale label font size in pixels
+        scaleFontSize : 12,
+
+        //String - Scale label font weight style
+        scaleFontStyle : "normal",
+
+        //String - Scale label font colour
+        scaleFontColor : "#666",
+
+        ///Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines : true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor : "rgba(0,0,0,.3)",
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth : 1,
+
+        //Boolean - Whether the line is curved between points
+        bezierCurve : true,
+
+        //Boolean - Whether to show a dot for each point
+        pointDot : true,
+
+        //Number - Radius of each point dot in pixels
+        pointDotRadius : 5,
+
+        //Number - Pixel width of point dot stroke
+        pointDotStrokeWidth : 1,
+
+        //Boolean - Whether to show a stroke for datasets
+        datasetStroke : true,
+
+        //Number - Pixel width of dataset stroke
+        datasetStrokeWidth : 2,
+
+        //Boolean - Whether to fill the dataset with a colour
+        datasetFill : true,
+
+        //Boolean - Whether to animate the chart
+        animation : false,
+
+        //Number - Number of animation steps
+        animationSteps : 60,
+
+        //String - Animation easing effect
+        animationEasing : "easeOutQuart",
+
+        //Function - Fires when the animation is complete
+        onAnimationComplete : null
+    };
+
+
+    //Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d");
+
+
+    new Chart(ctx).Line(data,options);
+
+    //END of chart settings
+
+
     $(function() {
 
         console.log($('.ui-widget'));
 
         var rooms = [
             {% for room in rooms %}
-                [{{forloop.counter}}, '{{room.room_name}}'],
+                [{{forloop.counter}}, {{room.room_name}}],
             {% endfor %}
         ];
 
@@ -68,22 +223,14 @@
 
         $('button').on('click', function(e){
 
-            e.preventDefault();
-
             var datalist = document.getElementById('room_name'),
                 inputVal = document.querySelector('input').value;
             console.log(inputVal);
 
             window.location.href='/hip-help/summary/' + inputVal;
-
-//            $('#browsers option').each(function() {
-//            if($(this).is(':selected')){
-//                // Your code here with the selected value
-//            }
-//        });
-
         })
     })
+
 </script>
 
 </body>
