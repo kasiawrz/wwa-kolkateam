@@ -3,6 +3,7 @@ import json
 
 from django.shortcuts import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.conf import settings
@@ -102,5 +103,13 @@ def listener(request):
     return HttpResponse(status=204)
 
 
+@login_required(login_url='/hip-help/admin/login/')
+def home(request):
+    room = core_models.Installation.objects.first()
+    if not room:
+        return HttpResponse('<h1>No rooms stats</h1>')
+    return HttpResponseRedirect(reverse('summary', args=(room.room_name,)))
+
+
 def help(request):
-    pass
+    return HttpResponse('Help')
