@@ -52,7 +52,14 @@ class Installation(models.Model):
         return most_asked
 
     def traverse_nltk_item(self, item, candidates):
+
         if isinstance(item, list):
+            if item._label == 'NP':
+                merged_candidates = []
+                self.merge_leafs(item, merged_candidates)
+                print(merged_candidates)
+                candidates.append(' '.join(merged_candidates))
+
             for nested_item in item:
                 self.traverse_nltk_item(nested_item, candidates)
         elif isinstance(item, tuple):
@@ -60,10 +67,6 @@ class Installation(models.Model):
             if kind in ['NN', 'NNP']:
                 candidates.append(word)
         elif isinstance(item, nltk.tree.Tree):
-            merged_candidates = []
-            self.merge_leafs(item, merged_candidates)
-            print(merged_candidates)
-            candidates.append(' '.join(merged_candidates))
             self.traverse_nltk_item(item, candidates)
 
     def merge_leafs(self, item, candidates):
