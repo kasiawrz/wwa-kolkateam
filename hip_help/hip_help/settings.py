@@ -144,7 +144,8 @@ def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
             "hipchatApiConsumer": {
                 "fromName": "HipHelp",
                 "scopes": [
-                    "send_notification"
+                    "send_notification",
+                    'view_room'
                 ]
             },
             "installable": {

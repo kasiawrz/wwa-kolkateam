@@ -3,6 +3,8 @@ import requests
 from django.db import models
 from django.db.models import Q
 
+from . import views
+
 
 class Installation(models.Model):
     oauth_id = models.CharField(max_length=100)
@@ -15,7 +17,6 @@ class Installation(models.Model):
     authorization_url = models.URLField(blank=True)
     token_url = models.URLField(blank=True)
     api_url = models.URLField(blank=True)
-    room_url = models.URLField(blank=True)
 
     def find_match(self, sentence):
         query = Q()
@@ -34,11 +35,16 @@ class Installation(models.Model):
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
 
-    def fetch_room_name(self, room_name_url):
-        response = requests.get(room_name_url)
+    def fetch_room_name(self):
+        token = views.get_token(self)
+        response = requests.get('/'.join([self.api_url, 'room', str(self.room_id)]), headers={
+            'Authorization': 'Bearer ' + token.token
+        })
+        room = response.json()
+        return room['name']
 
-    def set_room_name(self, room_name_url):
-        room_name = self.fetch_room_name(room_name_url)
+    def set_room_name(self):
+        room_name = self.fetch_room_name()
         self.room_name = room_name
         self.save()
 
