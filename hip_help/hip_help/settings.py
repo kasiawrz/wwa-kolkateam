@@ -24,7 +24,7 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ROOT = 'https://1706bd58.ngrok.io'
+ROOT = None
 
 ALLOWED_HOSTS = ['*']
 
@@ -144,7 +144,8 @@ def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
             "hipchatApiConsumer": {
                 "fromName": "HipHelp",
                 "scopes": [
-                    "send_notification"
+                    "send_notification",
+                    'view_room'
                 ]
             },
             "installable": {

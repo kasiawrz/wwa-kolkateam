@@ -40,7 +40,9 @@ def installed(request):
     installation.authorization_url = capabilities_data['capabilities']['oauth2Provider']['authorizationUrl']
     installation.token_url = capabilities_data['capabilities']['oauth2Provider']['tokenUrl']
     installation.api_url = capabilities_data['capabilities']['hipchatApiProvider']['url']
+    installation.save()
 
+    installation.set_room_name()
     installation.save()
 
     return HttpResponse(status=200)
@@ -80,15 +82,38 @@ def listener(request):
     room_id = message['item']['room']['id']
 
     keyword = message['item']['message']['message']
-    keyword = " ".join(keyword.split()[1:])
+    keywords = keyword.split()[1:]
 
     installation = core_models.Installation.objects.get(room_id=room_id)
-    answer = installation.find_answer(keyword)
 
-    if answer is not None:
-        send_message(answer, installation)
+    if len(keywords) > 1 and keywords[0] == 'like':
+        keyword = ' '.join(keywords[1:])
+        answer = installation.find_answer(keyword)  # everything except "like"
+        answer.like()
+
+        if answer is not None:
+            send_message('you liked "{keyword}"'.format(keyword=keyword), installation)
+        else:
+            send_message('"{keyword}" not found'.format(keyword=keyword), installation)
+
+    elif len(keywords) > 1 and keywords[0] == 'dislike':
+        keyword = ' '.join(keywords[1:])
+        answer = installation.find_answer(keyword)  # everything except "dislike"
+        answer.dislike()
+
+        if answer is not None:
+            send_message('you disliked "{keyword}"'.format(keyword=keyword), installation)
+        else:
+            send_message('"{keyword}" not found'.format(keyword=keyword), installation)
     else:
-        send_message('help message for "{keyword}" not found'.format(keyword=keyword), installation)
+        keyword = ' '.join(keywords)
+        answer = installation.find_answer(keyword)
+        if answer is not None:
+            send_message(answer.text, installation)
+        else:
+            send_message('help message for "{keyword}" not found'.format(keyword=keyword), installation)
+
+    answer.increment_ask_counter()
 
     return HttpResponse(status=204)
 
