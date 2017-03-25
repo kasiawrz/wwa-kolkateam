@@ -57,5 +57,9 @@ class Answer(models.Model):
         records = get_repo_from_git()
         cls.save_records(records)
 
+    def save(self, *args, **kwargs):
+        self.keyword = self.keyword.lower()
+        super(Answer, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.keyword

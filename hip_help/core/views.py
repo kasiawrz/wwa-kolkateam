@@ -72,6 +72,8 @@ def listener(request):
     room_id = message['item']['room']['id']
 
     keyword = message['item']['message']['message']
+    keyword = keyword.lower()
+
     installation = core_models.Installation.objects.get(room_id=room_id)
 
     if keyword.split()[0] == '/helpme':  # obligated to answer
