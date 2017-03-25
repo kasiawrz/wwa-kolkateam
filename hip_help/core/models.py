@@ -42,7 +42,7 @@ class Installation(models.Model):
         candidates = []
         for item in cp.parse(text.tags):
             self.traverse_nltk_item(item, candidates)
-
+        print(candidates)
         candidate_answers = self.answers.filter(keyword__in=candidates)
         if candidate_answers.exists():
             most_asked = candidate_answers.order_by('-ask_count').first()
