@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 
-    <!-- vis.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.9.0/vis.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.9.0/vis.min.css" rel="stylesheet" type="text/css" />
+    <!-- Chart.js library -->
+    <script type="text/javascript" src="http://www.chartjs.org/assets/Chart.js"></script>
+
+
 
     <style>
         * {
@@ -23,86 +24,180 @@
             width: 90vw;
             margin: 30px auto;
         }
+
+        #visualization {
+            width: 90vw;
+            align-items: center;
+        }
     </style>
 
 
 </head>
 <body>
-    <section>
-        <div class="row">
-            <div class="col-xs-6">
-                <input list="room_name" class="col-xs-6 form-control">
+<section>
+    <div class="row">
+        <div class="col-xs-4">
+            <input list="room_name" class="col-xs-4 form-control" placeholder="room selector">
 
-                <datalist id="room_name">
+            <datalist id="room_name">
 
-                </datalist>
-                <button class="btn btn-info">refresh</button>
-            </div>
+            </datalist>
         </div>
-
 
         <div>
-           <table class="table">
-               <thead class="thead-default">
-                   <tr>
-                       <th>#</th>
-                       <th>Key</th>
-                       <th>Likes</th>
-                       <th>Dislikes</th>
-                       <th>Number of requests</th>
-                   </tr>
-               </thead>
-               <tbody>
-                   {% for answer in answers %}
-                   <tr>
-                       <th>{{forloop.counter}}</th>
-                       <td>{{answer.keyword}}</td>
-                       <td>{{answer.likes_count}}</td>
-                       <td>{{answer.dislikes_count}}</td>
-                       <td>{{answer.ask_count}}</td>
-                   </tr>
-                   {% endfor %}
-               </tbody>
-           </table>
+        <button class="btn btn-info">refresh</button>
         </div>
-    </section>
+    </div>
 
-    <section>
 
-        <div id="visualization" class="col-centered"></div>
-        <script type="text/javascript">
-            var container = document.getElementById('visualization');
-            var items = [
-                {% for answer in answers %}
-                {x: '{{answer.keyword}}', y: {{answer.ask_count}}},
-                {% endfor %}
-            ];
+    <div>
+        <table class="table">
+            <thead class="thead-default">
+            <tr>
+                <th>#</th>
+                <th>Key</th>
+                <th>Likes</th>
+                <th>Dislikes</th>
+                <th>Number of requests</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for answer in answers %}
+            <tr>
+                <th>{{forloop.counter}}</th>
+                <td>{{answer.keyword}}</td>
+                <td>{{answer.likes_count}}</td>
+                <td>{{answer.dislikes_count}}</td>
+                <td>{{answer.ask_count}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-            var firstItem = items[0].x,
-                itemLen = items.length,
-                lastItem = items[itemLen-1].x;
+    <canvas id="myChart" width="500" height="300"></canvas>
 
-            console.log(firstItem, ' start');
-            console.log(lastItem, '  last');
 
-            var dataset = new vis.DataSet(items);
-            var options = {
-                width: '90%',
-                barChart : {
-                    sideBySide: true
-                },
-                showCurrentTime: false,
-                start: firstItem,
-                end: lastItem
-            };
-            var graph2d = new vis.Graph2d(container, dataset, options);
-        </script>
-
-    </section>
-
+</section>
 
 
 <script>
+
+    //chart
+    var data = {
+        labels : [
+        {% for answer in answers %}
+    "{{answer.keyword}}",
+    {% endfor %}
+    ],
+
+    datasets : [
+        {
+            fillColor : "rgba(252,233,79,0.5)",
+            strokeColor : "rgba(82,75,25,1)",
+            pointColor : "rgba(166,152,51,1)",
+            pointStrokeColor : "#fff",
+            data :  [
+            {% for answer in answers %}
+        "{{answer.ask_count}}",
+        {% endfor %}
+        ]
+    }
+    ]
+    }
+
+
+    var options={
+        //Boolean - If we show the scale above the chart data
+        scaleOverlay : false,
+
+        //Boolean - If we want to override with a hard coded scale
+        scaleOverride : true,
+
+        //** Required if scaleOverride is true **
+        //Number - The number of steps in a hard coded scale
+        scaleSteps : 14,
+        //Number - The value jump in the hard coded scale
+        scaleStepWidth : 80,
+        //Number - The scale starting value
+        scaleStartValue : 200,
+        //String - Colour of the scale line
+        scaleLineColor : "rgba(20,20,20,.7)",
+
+        //Number - Pixel width of the scale line
+        scaleLineWidth : 1,
+
+        //Boolean - Whether to show labels on the scale
+        scaleShowLabels : true,
+
+        //Interpolated JS string - can access value
+        scaleLabel : "<%=value%>",
+
+        //String - Scale label font declaration for the scale label
+        scaleFontFamily : "'Arial'",
+
+        //Number - Scale label font size in pixels
+        scaleFontSize : 12,
+
+        //String - Scale label font weight style
+        scaleFontStyle : "normal",
+
+        //String - Scale label font colour
+        scaleFontColor : "#666",
+
+        ///Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines : true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor : "rgba(0,0,0,.3)",
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth : 1,
+
+        //Boolean - Whether the line is curved between points
+        bezierCurve : true,
+
+        //Boolean - Whether to show a dot for each point
+        pointDot : true,
+
+        //Number - Radius of each point dot in pixels
+        pointDotRadius : 5,
+
+        //Number - Pixel width of point dot stroke
+        pointDotStrokeWidth : 1,
+
+        //Boolean - Whether to show a stroke for datasets
+        datasetStroke : true,
+
+        //Number - Pixel width of dataset stroke
+        datasetStrokeWidth : 2,
+
+        //Boolean - Whether to fill the dataset with a colour
+        datasetFill : true,
+
+        //Boolean - Whether to animate the chart
+        animation : false,
+
+        //Number - Number of animation steps
+        animationSteps : 60,
+
+        //String - Animation easing effect
+        animationEasing : "easeOutQuart",
+
+        //Function - Fires when the animation is complete
+        onAnimationComplete : null
+    };
+
+
+    //Get context with jQuery - using jQuery's .get() method.
+    var ctx = $("#myChart").get(0).getContext("2d");
+
+
+    new Chart(ctx).Line(data,options);
+
+    //END of chart settings
+
+
     $(function() {
 
         console.log($('.ui-widget'));
@@ -135,6 +230,7 @@
             window.location.href='/hip-help/summary/' + inputVal;
         })
     })
+
 </script>
 
 </body>
