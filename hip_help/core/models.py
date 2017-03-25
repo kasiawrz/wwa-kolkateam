@@ -60,7 +60,21 @@ class Installation(models.Model):
             if kind in ['NN', 'NNP']:
                 candidates.append(word)
         elif isinstance(item, nltk.tree.Tree):
+            merged_candidates = []
+            self.merge_leafs(item, merged_candidates)
+            print(merged_candidates)
+            candidates.append(' '.join(merged_candidates))
             self.traverse_nltk_item(item, candidates)
+
+    def merge_leafs(self, item, candidates):
+        if isinstance(item, list):
+            for list_item in item:
+                if isinstance(list_item, tuple):
+                    candidates.append(list_item[0])
+        elif isinstance(item, tuple):
+            candidates.append(item[0])
+
+
 
 
 
