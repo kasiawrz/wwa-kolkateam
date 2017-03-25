@@ -130,7 +130,7 @@ try:
 except ImportError:
     pass
 
-def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
+def GET_CAPABILITIES(help, self, installed, listener, uninstalled, root=ROOT):
     return {
         "name": "HipHelp",
         "description": "Addon that automate answering FAQ",
@@ -155,7 +155,8 @@ def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
                 "allowGlobal": False,
                 "allowRoom": True,
                 "callbackUrl": "{root}{installed}".format(root=root,
-                                                           installed=installed)
+                                                           installed=installed),
+                "uninstalledUrl": "{root}{uninstalled}".format(root=root, uninstalled=uninstalled)
             },
             "webhook": [
                 {

@@ -5,7 +5,7 @@ import json
 from django.shortcuts import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.conf import settings
 from django.utils import timezone
 
@@ -17,15 +17,17 @@ from . import models as core_models
 def capabilities(request):
     capabilities_data = settings.GET_CAPABILITIES(
         reverse('help'), reverse('capabilities'),
-        reverse('installed'), reverse('listener')
+        reverse('installed'), reverse('listener'), reverse('uninstalled')
     )
 
     return JsonResponse(capabilities_data, status=200)
 
 
-@require_POST
 @csrf_exempt
 def installed(request):
+    if request.method == 'DELETE':
+        return HttpResponse(status=200)
+
     installation_data = json.loads(request.body.decode('utf-8'))
     installation = core_models.Installation(
         oauth_id=installation_data['oauthId'],
@@ -46,6 +48,17 @@ def installed(request):
     installation.save()
 
     return HttpResponse(status=200)
+
+
+@csrf_exempt
+def uninstalled(request):
+    print('kkkk')
+    redirect_url = request.GET.get('redirect_url', None)
+    installable_url = request.GET.get('installable_url', None)
+    response = requests.get(installable_url)
+    installation = response.json()
+    core_models.Installation.objects.get(oauth_id=installation['oauthId']).delete()
+    return HttpResponseRedirect(redirect_url)
 
 
 # todo move to model
