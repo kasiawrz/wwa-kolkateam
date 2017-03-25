@@ -154,8 +154,7 @@ def GET_CAPABILITIES(help, self, installed, listener, uninstalled, root=ROOT):
             "installable": {
                 "allowGlobal": False,
                 "allowRoom": True,
-                "callbackUrl": "{root}{installed}".format(root=root,
-                                                           installed=installed),
+                "callbackUrl": "{root}{installed}".format(root=root, installed=installed),
                 "uninstalledUrl": "{root}{uninstalled}".format(root=root, uninstalled=uninstalled)
             },
             "webhook": [
