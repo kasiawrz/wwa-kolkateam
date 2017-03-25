@@ -80,7 +80,7 @@ def listener(request):
     room_id = message['item']['room']['id']
 
     keyword = message['item']['message']['message']
-    keyword = keyword.split()[1]
+    keyword = " ".join(keyword.split()[1:])
 
     installation = core_models.Installation.objects.get(room_id=room_id)
     answer = installation.find_answer(keyword)

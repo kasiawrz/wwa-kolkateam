@@ -26,7 +26,7 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 DEBUG = True
 ROOT = 'https://1706bd58.ngrok.io'
 
-ALLOWED_HOSTS = ['f5d00708.ngrok.io', 'localhost', '1706bd58.ngrok.io']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -122,6 +122,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+try:
+    from .local_settings import *
+except ImportError:
+    pass
 
 def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
     return {
