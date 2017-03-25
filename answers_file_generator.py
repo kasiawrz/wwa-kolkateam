@@ -5,10 +5,10 @@ fake = Faker()
 
 answers_to_fake = dict()
 
-for i in range(0, 500):
-    key = 'room ' + str(i)
+for i in range(0, 5):
+    key = '3702345'
     room_values = []
-    for p in range(0, 100):
+    for p in range(0, 10):
 
         keyss = fake.name()
         vals = fake.paragraph(nb_sentences=3, variable_nb_sentences=True)

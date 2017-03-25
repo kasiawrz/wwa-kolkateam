@@ -1,6 +1,7 @@
 from django.db import models
 
 from core.models import Installation
+from answers.utils import open_answers
 
 
 class Answer(models.Model):
@@ -27,9 +28,10 @@ class Answer(models.Model):
     # TODO optimize and change for real room names (ids currently)
     @classmethod
     def save_records(cls, records_dict):
+        cls.objects.all().delete()
         for room_id, answers_list in records_dict.items():
             try:
-                room = Installation.objects.get(id=int(room_id))
+                room = Installation.objects.get(room_id=int(room_id))
             except models.ObjectDoesNotExist:
                 continue
 
@@ -41,6 +43,11 @@ class Answer(models.Model):
                     text=answer['text']
                 ))
             cls.objects.bulk_create(answer_object_list)
+
+    @classmethod
+    def fetch_data_from_file(cls, filename):
+        records = open_answers(filename)
+        cls.save_records(records)
 
     def __str__(self):
         return self.keyword
