@@ -26,6 +26,13 @@ def capabilities(request):
 def installed(request):
     if request.method == 'DELETE':
         return HttpResponse(status=200)
+    elif not request.body:
+        redirect_url = request.GET.get('redirect_url', None)
+        installable_url = request.GET.get('installable_url', None)
+        response = requests.get(installable_url)
+        installation = response.json()
+        core_models.Installation.objects.get(oauth_id=installation['oauthId']).delete()
+        return HttpResponseRedirect(redirect_url)
 
     installation_data = json.loads(request.body.decode('utf-8'))
     installation = core_models.Installation(
@@ -51,6 +58,7 @@ def installed(request):
 
 @csrf_exempt
 def uninstalled(request):
+    print('dddddddddddddddddddddddddddddddddddddddddd')
     redirect_url = request.GET.get('redirect_url', None)
     installable_url = request.GET.get('installable_url', None)
     response = requests.get(installable_url)
