@@ -72,7 +72,7 @@ class Installation(models.Model):
         token = response.json()
 
         token_object = AccessToken.objects.create(
-            self=self,
+            installation=self,
             token=token['access_token'],
             expiration_timestamp=timezone.now() + datetime.timedelta(seconds=int(token['expires_in']))
         )
