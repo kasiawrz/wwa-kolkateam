@@ -12,7 +12,5 @@ urlpatterns = [
         url(r'help', core_views.help, name='help'),
 
         url(r'summary/(?P<id>[0-9]+)', answers_views.summary, name='summary'),
-
-
     ])),
 ]
