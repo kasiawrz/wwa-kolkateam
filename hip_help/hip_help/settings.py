@@ -24,9 +24,9 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ROOT = 'https://f5d00708.ngrok.io'
+ROOT = 'https://1706bd58.ngrok.io'
 
-ALLOWED_HOSTS = ['f5d00708.ngrok.io', 'localhost']
+ALLOWED_HOSTS = ['f5d00708.ngrok.io', 'localhost', '1706bd58.ngrok.io']
 
 
 # Application definition
@@ -57,7 +57,7 @@ ROOT_URLCONF = 'hip_help.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

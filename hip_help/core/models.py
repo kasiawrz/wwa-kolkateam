@@ -30,6 +30,8 @@ class Installation(models.Model):
     def has_token(self):
         return AccessToken.objects.filter(installation=self).exists()
 
+    def __str__(self):
+        return str(self.room_id)
 
 class AccessToken(models.Model):
     installation = models.OneToOneField('Installation')
