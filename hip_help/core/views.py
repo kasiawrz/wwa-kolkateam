@@ -102,9 +102,9 @@ def listener(request):
     if len(keywords) > 1 and keywords[0] == 'like':
         keyword = ' '.join(keywords[1:])
         answer = installation.find_answer(keyword)  # everything except "like"
-        answer.like()
 
         if answer is not None:
+            answer.like()
             send_message('you liked "{keyword}"'.format(keyword=keyword), installation)
         else:
             send_message('"{keyword}" not found'.format(keyword=keyword), installation)
@@ -112,9 +112,9 @@ def listener(request):
     elif len(keywords) > 1 and keywords[0] == 'dislike':
         keyword = ' '.join(keywords[1:])
         answer = installation.find_answer(keyword)  # everything except "dislike"
-        answer.dislike()
 
         if answer is not None:
+            answer.dislike()
             send_message('you disliked "{keyword}"'.format(keyword=keyword), installation)
         else:
             send_message('"{keyword}" not found'.format(keyword=keyword), installation)
