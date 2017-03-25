@@ -113,7 +113,8 @@ def listener(request):
         else:
             send_message('help message for "{keyword}" not found'.format(keyword=keyword), installation)
 
-    answer.increment_ask_counter()
+    if answer:
+        answer.increment_ask_counter()
 
     return HttpResponse(status=204)
 

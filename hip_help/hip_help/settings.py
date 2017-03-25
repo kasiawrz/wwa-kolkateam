@@ -25,6 +25,9 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ROOT = None
+DATA_REPOSITORY_URL = None
+REPOSITORY_PATH = None
+DATA_FILENAME = None
 
 ALLOWED_HOSTS = ['*']
 

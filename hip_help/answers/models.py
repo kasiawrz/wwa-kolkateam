@@ -1,9 +1,7 @@
-import requests
-
 from django.db import models
 
 from core.models import Installation
-from answers.utils import open_answers
+from answers.utils import get_repo_from_git
 
 
 class Answer(models.Model):
@@ -55,8 +53,8 @@ class Answer(models.Model):
             room.answers.filter(keyword__in=list(keywords_to_delete)).delete()
 
     @classmethod
-    def fetch_data_from_file(cls, filename):
-        records = open_answers(filename)
+    def fetch_data(cls):
+        records = get_repo_from_git()
         cls.save_records(records)
 
     def __str__(self):
