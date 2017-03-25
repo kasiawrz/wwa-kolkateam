@@ -127,7 +127,6 @@ try:
 except ImportError:
     pass
 
-
 def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
     return {
         "name": "HipHelp",
