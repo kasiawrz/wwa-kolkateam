@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Hipchat Help Me - Admin View</title>
-    <link rel="stylesheet" href="../../../../../wwa-kolkateam/adminView/css/style.css">
-
-    <!-- Latest compiled and minified CSS
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">  -->
-
-    <!-- jQuery library
+     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="js/app.js"></script> -->
+
 
 </head>
 <body>
     <section>
-        <form>
-            <ul>
-                {% for room in rooms %}
-                <li> <a href="{% url 'summary' room.room_id %}">{{room.room_id}}</a></li>
-                {% endfor %}
-            </ul>
+
+        <input list="room_name">
+
+        <datalist id="room_name">
+
+        </datalist>
+        <button>refresh</button>
 
 
-        </form>
         <div class="table-hover">
            <table>
                <tr>
@@ -48,6 +43,49 @@
         </div>
     </section>
 
+<script>
+    $(function() {
+
+        console.log($('.ui-widget'));
+
+        var rooms = [
+            {% for room in rooms %}
+                [{{forloop.counter}}, {{room.room_id}}],
+            {% endfor %}
+        ];
+
+
+        for (var i=0; i < rooms.length; i++) {
+
+            var option = document.createElement('option');
+            option.setAttribute('value', rooms[i][1]);
+
+            var list = document.getElementById('room_name');
+            list.appendChild(option);
+
+            console.log(rooms[i]);
+
+        }
+
+        $('button').on('click', function(e){
+
+            e.preventDefault();
+
+            var datalist = document.getElementById('room_name'),
+                inputVal = document.querySelector('input').value;
+            console.log(inputVal);
+
+            window.location.href='/hip-help/summary/' + inputVal;
+
+//            $('#browsers option').each(function() {
+//            if($(this).is(':selected')){
+//                // Your code here with the selected value
+//            }
+//        });
+
+        })
+    })
+</script>
 
 </body>
 </html>
