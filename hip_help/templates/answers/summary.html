@@ -80,11 +80,13 @@
             </tbody>
         </table>
     </div>
-    <h4>Number of requests</h4>
-    <canvas id="requests" width="500" height="300"></canvas>
-    <br>
-    <h4>Number of likes and dislikes</h4>
-    <canvas id="likes" width="500" height="300"></canvas>
+    <div class="pagination-centered">
+        <h4>Number of requests</h4>
+        <canvas id="requests" width="500" height="300"></canvas>
+        <br>
+        <h4>Number of likes and dislikes</h4>
+        <canvas id="likes" width="500" height="300"></canvas>
+    </div>
 
 
 </section>
@@ -161,7 +163,7 @@
             //Number - The value jump in the hard coded scale
             scaleStepWidth: Math.floor((maxVal - minVal) / 12),
             //Number - The scale starting value
-            scaleStartValue: minVal - 20,
+            scaleStartValue: minVal,
             //String - Colour of the scale line
             scaleLineColor: "rgba(20,20,20,.7)",
 
@@ -237,8 +239,14 @@
         {% endfor %}
         ];
 
-        var maxLikeVal = Math.max.apply(Math, allLikeVal),
-            minLikeVal = Math.min.apply(Math, allLikeVal);
+        var maxLikeVal = Math.max.apply(Math, allLikeVal);
+
+        if (Math.min.apply(Math, allLikeVal) > 30) {
+            var minLikeVal = Math.min.apply(Math, allLikeVal - 20);
+        }
+        else {
+            var minLikeVal = 0;
+        }
 
         console.log(maxLikeVal, minLikeVal);
 
@@ -294,7 +302,7 @@
             //Number - The value jump in the hard coded scale
             scaleStepWidth: Math.floor((maxLikeVal - minLikeVal) / 12),
             //Number - The scale starting value
-            scaleStartValue: minLikeVal - 20,
+            scaleStartValue: minLikeVal,
             //String - Colour of the scale line
             scaleLineColor: "rgba(20,20,20,.7)",
 
