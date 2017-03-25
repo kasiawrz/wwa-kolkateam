@@ -25,6 +25,9 @@ SECRET_KEY = '+cx^=7-$sk9o!1noz&_q7a9u23w&r00al)sfz8rywg=_3etygo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ROOT = None
+DATA_REPOSITORY_URL = None
+REPOSITORY_PATH = None
+DATA_FILENAME = None
 
 ALLOWED_HOSTS = ['*']
 
@@ -127,7 +130,7 @@ try:
 except ImportError:
     pass
 
-def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
+def GET_CAPABILITIES(help, self, installed, listener, uninstalled, root=ROOT):
     return {
         "name": "HipHelp",
         "description": "Addon that automate answering FAQ",
@@ -152,7 +155,8 @@ def GET_CAPABILITIES(help, self, installed, listener, root=ROOT):
                 "allowGlobal": False,
                 "allowRoom": True,
                 "callbackUrl": "{root}{installed}".format(root=root,
-                                                           installed=installed)
+                                                           installed=installed),
+                "uninstalledUrl": "{root}{uninstalled}".format(root=root, uninstalled=uninstalled)
             },
             "webhook": [
                 {

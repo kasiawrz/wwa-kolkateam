@@ -1,9 +1,7 @@
-import requests
-
 from django.db import models
 
 from core.models import Installation
-from answers.utils import open_answers
+from answers.utils import get_repo_from_git
 
 
 class Answer(models.Model):
@@ -31,9 +29,9 @@ class Answer(models.Model):
 
     @classmethod
     def save_records(cls, records_dict):
-        for room_id, answers_list in records_dict.items():
+        for room_name, answers_list in records_dict.items():
             try:
-                room = Installation.objects.get(room_id=int(room_id))
+                room = Installation.objects.get(room_name=room_name)
             except models.ObjectDoesNotExist:
                 continue
 
@@ -55,8 +53,8 @@ class Answer(models.Model):
             room.answers.filter(keyword__in=list(keywords_to_delete)).delete()
 
     @classmethod
-    def fetch_data_from_file(cls, filename):
-        records = open_answers(filename)
+    def fetch_data(cls):
+        records = get_repo_from_git()
         cls.save_records(records)
 
     def __str__(self):
