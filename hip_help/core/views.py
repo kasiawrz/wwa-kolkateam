@@ -40,7 +40,9 @@ def installed(request):
     installation.authorization_url = capabilities_data['capabilities']['oauth2Provider']['authorizationUrl']
     installation.token_url = capabilities_data['capabilities']['oauth2Provider']['tokenUrl']
     installation.api_url = capabilities_data['capabilities']['hipchatApiProvider']['url']
+    installation.save()
 
+    installation.set_room_name()
     installation.save()
 
     return HttpResponse(status=200)
