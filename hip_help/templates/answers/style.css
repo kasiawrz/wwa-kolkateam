@@ -1,0 +1,35 @@
+* {
+    font-family: Arial,sans-serif;
+    text-align: left;
+}
+
+
+form {
+    margin: 10px;
+}
+
+.input[type=text] {
+    height: 2rem;
+    width: 130px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+/* When the input field gets focus, change its width to 90% */
+input[type=text]:focus {
+    width: 90%;
+}
+
+
+table {
+    width: 90vw;
+    margin: 30px auto;
+    border-spacing: 2px;
+    border-color: grey;
+}
+
+td, th {
+    line-height: 1.2rem;
+    padding: .75rem;
+    border-top: 1px solid #eceeef;
+}
