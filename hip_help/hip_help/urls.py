@@ -12,6 +12,6 @@ urlpatterns = [
         url(r'listener', core_views.listener, name='listener'),
         url(r'help', core_views.help, name='help'),
 
-        url(r'summary/(?P<id>[0-9]+)', answers_views.summary, name='summary'),
+        url(r'summary/(?P<room_name>[a-zA-Z0-9_-]+)', answers_views.summary, name='summary'),
     ])),
 ]
