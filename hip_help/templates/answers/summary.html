@@ -41,6 +41,10 @@
 <body>
 <section>
     <a href="{% url 'fetch-data' %}" class="btn btn-success">fetch data from repository for all rooms</a>
+
+    <div>
+        <p>Room: </p>
+    </div>
     <div class="row">
         <div class="col-xs-4">
             <input list="room_name" class="col-xs-4 form-control" placeholder="room selector">
@@ -94,8 +98,6 @@
 
 <script>
 
-
-    console.log('hello   ', obj);
     var obj = {
         labels : [
                 {% for answer in answers %}
@@ -103,10 +105,7 @@
                 {% endfor %}
                 ]};
 
-
     function firstChart() {
-
-        console.log('haaalooo');
 
         //collect data for chart
          var allVal = [
@@ -143,8 +142,6 @@
             }
         ]
     }
-
-    console.log(data, '   data1');
 
         var options = {
 
@@ -223,7 +220,13 @@
         //Get context with jQuery - using jQuery's .get() method.
         var ctx = $("#requests").get(0).getContext("2d");
 
-        new Chart(ctx).Line(data, options);
+
+        if (data.datasets === NaN || data.datasets === undefined) {
+
+        }
+        else {
+            new Chart(ctx).Line(data, options);
+        }
     }
     firstChart();
 
@@ -251,7 +254,6 @@
         console.log(maxLikeVal, minLikeVal);
 
 
-
         var data2 = {
             labels: [
                 {% for answer in answers %}
@@ -261,8 +263,8 @@
             datasets : [
                 {
             fillColor : "rgba(100,23,79,0.5)",
-                strokeColor : "rgba(82,75,25,1)",
-                pointColor : "rgba(100,152,51,1)",
+                strokeColor : "rgba(100,23,79,1)",
+                pointColor : "rgba(100,23,79,1)",
                 pointStrokeColor : "#fff",
                 label : 'likes',
                 data :  [
@@ -285,11 +287,14 @@
             }
         ]};
 
-        console.log(data2.datasets.data, 'datasets');
-
-
         var options2 = {
 
+            legend: {
+                display: true,
+                text: String,
+                labels: {
+                fontColor: 'rgb(255, 99, 132)'
+            }},
             //Boolean - If we show the scale above the chart data
             scaleOverlay: false,
 
@@ -360,8 +365,15 @@
 
         var ctx = $("#likes").get(0).getContext("2d");
 
-        new Chart(ctx).Line(data2, options2);
+
+         if (data2.datasets === NaN || data.datasets === undefined) {
+
+        }
+        else {
+            new Chart(ctx).Line(data2, options2);
+        }
     }
+
     secondChart();
 
 
