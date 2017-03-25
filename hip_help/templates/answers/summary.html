@@ -21,7 +21,7 @@
             margin: 10px;
         }
 
-        table {
+        .table {
             width: 90vw;
             margin: 30px auto;
         }
@@ -29,6 +29,10 @@
         #visualization {
             width: 90vw;
             align-items: center;
+        }
+
+        canvas {
+            margin: 0 auto;
         }
     </style>
 
@@ -138,6 +142,7 @@
         ]
     }
 
+    console.log(data, '   data1');
 
         var options = {
 
@@ -241,12 +246,13 @@
 
         var data2 = {
             labels: [
-            {% for answer in answers %}
-            "{{answer.keyword}}",
-            {% endfor %}
+                {% for answer in answers %}
+                    "{{answer.keyword}}",
+                {% endfor %}
             ],
-        datasets : {
-            fillColor : "rgba(100,233,79,0.5)",
+            datasets : [
+                {
+            fillColor : "rgba(100,23,79,0.5)",
                 strokeColor : "rgba(82,75,25,1)",
                 pointColor : "rgba(100,152,51,1)",
                 pointStrokeColor : "#fff",
@@ -256,8 +262,22 @@
                         "{{answer.likes_count}}",
                     {% endfor %}
                 ]
+            },
+             {
+            fillColor : "rgba(100,253,79,0.5)",
+                strokeColor : "rgba(182,175,25,1)",
+                pointColor : "rgba(10,152,51,1)",
+                pointStrokeColor : "#fff",
+                label : 'dislikes',
+                data :  [
+                    {% for answer in answers %}
+                        "{{answer.dislikes_count}}",
+                    {% endfor %}
+                ]
             }
-        };
+        ]};
+
+        console.log(data2.datasets.data, 'datasets');
 
 
         var options2 = {
@@ -331,7 +351,6 @@
         };
 
         var ctx = $("#likes").get(0).getContext("2d");
-
 
         new Chart(ctx).Line(data2, options2);
     }
