@@ -4,7 +4,6 @@ from core import models as core_models
 
 
 def summary(request, room_name):
-    print(room_name)
     room=core_models.Installation.objects.get(room_name=room_name)
     rooms=core_models.Installation.objects.all()
     answers=answers_models.Answer.objects.filter(installation=room)
