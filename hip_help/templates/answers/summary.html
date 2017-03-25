@@ -5,43 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Hipchat Help Me - Admin View</title>
-     <link rel="stylesheet" href="style.css">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+    <!-- vis.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.9.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.9.0/vis.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        * {
+            margin: 10px;
+        }
+
+        table {
+            width: 90vw;
+            margin: 30px auto;
+        }
+    </style>
 
 
 </head>
 <body>
     <section>
+        <div class="row">
+            <div class="col-xs-6">
+                <input list="room_name" class="col-xs-6 form-control">
 
-        <input list="room_name">
+                <datalist id="room_name">
 
-        <datalist id="room_name">
+                </datalist>
+                <button class="btn btn-info">refresh</button>
+            </div>
+        </div>
 
-        </datalist>
-        <button>refresh</button>
 
-
-        <div class="table-hover">
-           <table>
-               <tr>
-                   <th>#</th>
-                   <th>Key</th>
-                   <th>Likes</th>
-                   <th>Dislikes</th>
-                   <th>Number of requests</th>
-               </tr>
-               {% for answer in answers %}
-               <tr>
-                   <th></th>
-                   <td>{{answer.keyword}}</td>
-                   <td>{{answer.likes_count}}</td>
-                   <td>{{answer.dislikes_count}}</td>
-                   <td>{{answer.ask_count}}</td>
-               </tr>
-               {% endfor %}
+        <div>
+           <table class="table">
+               <thead class="thead-default">
+                   <tr>
+                       <th>#</th>
+                       <th>Key</th>
+                       <th>Likes</th>
+                       <th>Dislikes</th>
+                       <th>Number of requests</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   {% for answer in answers %}
+                   <tr>
+                       <th>{{forloop.counter}}</th>
+                       <td>{{answer.keyword}}</td>
+                       <td>{{answer.likes_count}}</td>
+                       <td>{{answer.dislikes_count}}</td>
+                       <td>{{answer.ask_count}}</td>
+                   </tr>
+                   {% endfor %}
+               </tbody>
            </table>
         </div>
     </section>
+
+    <section>
+
+        <div id="visualization" class="col-centered"></div>
+        <script type="text/javascript">
+            var container = document.getElementById('visualization');
+            var items = [
+                {% for answer in answers %}
+                {x: '{{answer.keyword}}', y: {{answer.ask_count}}},
+                {% endfor %}
+            ];
+
+            var firstItem = items[0].x,
+                itemLen = items.length,
+                lastItem = items[itemLen-1].x;
+
+            console.log(firstItem, ' start');
+            console.log(lastItem, '  last');
+
+            var dataset = new vis.DataSet(items);
+            var options = {
+                width: '90%',
+                barChart : {
+                    sideBySide: true
+                },
+                showCurrentTime: false,
+                start: firstItem,
+                end: lastItem
+            };
+            var graph2d = new vis.Graph2d(container, dataset, options);
+        </script>
+
+    </section>
+
+
 
 <script>
     $(function() {
@@ -50,7 +109,7 @@
 
         var rooms = [
             {% for room in rooms %}
-                [{{forloop.counter}}, {{room.room_id}}],
+                [{{forloop.counter}}, {{room.room_name}}],
             {% endfor %}
         ];
 
@@ -69,20 +128,11 @@
 
         $('button').on('click', function(e){
 
-            e.preventDefault();
-
             var datalist = document.getElementById('room_name'),
                 inputVal = document.querySelector('input').value;
             console.log(inputVal);
 
             window.location.href='/hip-help/summary/' + inputVal;
-
-//            $('#browsers option').each(function() {
-//            if($(this).is(':selected')){
-//                // Your code here with the selected value
-//            }
-//        });
-
         })
     })
 </script>
