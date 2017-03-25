@@ -40,12 +40,30 @@ class Installation(models.Model):
         text = TextBlob(sentence)
         cp = nltk.RegexpParser(grammar)
         candidates = []
-        for word, kind in cp.parse(text.tags):
+        for item in cp.parse(text.tags):
+            self.traverse_nltk_item(item, candidates)
+
+        candidate_answers = self.answers.filter(keyword__in=candidates)
+        if candidate_answers.exists():
+            most_asked = candidate_answers.order_by('-ask_count').first()
+        else:
+            most_asked = None
+
+        return most_asked
+
+    def traverse_nltk_item(self, item, candidates):
+        if isinstance(item, list):
+            for nested_item in item:
+                self.traverse_nltk_item(nested_item, candidates)
+        elif isinstance(item, tuple):
+            word, kind = item
             if kind in ['NN', 'NNP']:
                 candidates.append(word)
-        candidate_answers = self.answers.filter(keyword__in=candidates)
-        most_asked = candidate_answers.order_by('-ask_count').first()
-        return most_asked
+        elif isinstance(item, nltk.tree.Tree):
+            self.traverse_nltk_item(item, candidates)
+
+
+
 
 
 

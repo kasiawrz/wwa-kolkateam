@@ -72,10 +72,20 @@ def listener(request):
     room_id = message['item']['room']['id']
 
     keyword = message['item']['message']['message']
-    keywords = keyword.split()[1:]
-
     installation = core_models.Installation.objects.get(room_id=room_id)
 
+    if keyword.split()[0] == '/helpme':  # obligated to answer
+        keywords = keyword.split()[1:]
+        return help_me(keywords, installation)
+    else:  # may answer
+        suggestion = installation.make_suggestion(keyword)
+        if suggestion is not None:
+            installation.send_message('do you want information about {suggestion}? write /helpme {suggestion}'.format(suggestion=suggestion.keyword))
+
+        return HttpResponse(status=204)
+
+
+def help_me(keywords, installation):
     if len(keywords) > 1 and keywords[0] == 'like':
         keyword = ' '.join(keywords[1:])
         answer = installation.find_answer(keyword)  # everything except "like"

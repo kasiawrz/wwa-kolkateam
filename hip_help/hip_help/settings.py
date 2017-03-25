@@ -161,7 +161,7 @@ def GET_CAPABILITIES(help, self, installed, listener, uninstalled, root=ROOT):
                 {
                     "url": "{root}{listener}".format(root=root, listener=listener),
                     "event": "room_message",
-                    "pattern": "/helpme .*",
+                    "pattern": ".*",
                     "name": "Listener",
                     "authentication": "jwt"
                 }
