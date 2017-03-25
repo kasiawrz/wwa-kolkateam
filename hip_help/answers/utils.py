@@ -26,7 +26,6 @@ def get_repo_from_git(url=None, path=None, filename=None):
         Repo.clone_from(url, path)
 
     for root, dirs, files in os.walk(path):
-        print(files)
         if filename in files:
             result = os.path.join(root, filename)
 
