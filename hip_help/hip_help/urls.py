@@ -12,6 +12,7 @@ urlpatterns = [
         url(r'uninstalled', core_views.uninstalled, name='uninstalled'),
         url(r'listener', core_views.listener, name='listener'),
         url(r'help', core_views.help, name='help'),
-        url(r'summary/(?P<room_name>[a-zA-Z0-9_-]+)', answers_views.summary, name='summary')
+        url(r'summary/(?P<room_name>[a-zA-Z0-9_-]+)', answers_views.summary, name='summary'),
+        url(r'fetch-data-for-all-rooms/', answers_views.fetch_data_for_all_rooms, name='fetch-data')
     ])),
 ]

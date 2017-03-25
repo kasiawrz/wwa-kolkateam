@@ -7,12 +7,12 @@
     <title>Hipchat Help Me - Admin View</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 
     <!-- Chart.js library -->
     <script type="text/javascript" src="http://www.chartjs.org/assets/Chart.js"></script>
-
 
 
     <style>
@@ -35,6 +35,7 @@
 </head>
 <body>
 <section>
+    <a href="{% url 'fetch-data' %}" class="btn btn-success">fetch data from repository for all rooms</a>
     <div class="row">
         <div class="col-xs-4">
             <input list="room_name" class="col-xs-4 form-control" placeholder="room selector">
@@ -45,7 +46,7 @@
         </div>
 
         <div>
-        <button class="btn btn-info">refresh</button>
+            <button class="btn btn-info">refresh</button>
         </div>
     </div>
 
@@ -63,13 +64,13 @@
             </thead>
             <tbody>
             {% for answer in answers %}
-            <tr>
-                <th>{{forloop.counter}}</th>
-                <td>{{answer.keyword}}</td>
-                <td>{{answer.likes_count}}</td>
-                <td>{{answer.dislikes_count}}</td>
-                <td>{{answer.ask_count}}</td>
-            </tr>
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ answer.keyword }}</td>
+                    <td>{{ answer.likes_count }}</td>
+                    <td>{{ answer.dislikes_count }}</td>
+                    <td>{{ answer.ask_count }}</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
@@ -100,20 +101,20 @@
 
     //chart with the number of requests
     var data = {
-            labels : [
-                {% for answer in answers %}
-                    "{{answer.keyword}}",
-                {% endfor %}
-            ],
+        labels: [
+            {% for answer in answers %}
+                "{{answer.keyword}}",
+            {% endfor %}
+        ],
 
-        datasets : [
+        datasets: [
             {
-                fillColor : "rgba(252,233,79,0.5)",
-                strokeColor : "rgba(82,75,25,1)",
-                pointColor : "rgba(166,152,51,1)",
-                pointStrokeColor : "#fff",
-                label : 'requests',
-                data :  [
+                fillColor: "rgba(252,233,79,0.5)",
+                strokeColor: "rgba(82,75,25,1)",
+                pointColor: "rgba(166,152,51,1)",
+                pointStrokeColor: "#fff",
+                label: 'requests',
+                data: [
                     {% for answer in answers %}
                         "{{answer.ask_count}}",
                     {% endfor %}
@@ -123,77 +124,77 @@
     }
 
 
-    var options={
+    var options = {
 
         legend: {
             display: true
         },
         //Boolean - If we show the scale above the chart data
-        scaleOverlay : false,
+        scaleOverlay: false,
 
         //Boolean - If we want to override with a hard coded scale
-        scaleOverride : true,
+        scaleOverride: true,
 
         //** Required if scaleOverride is true **
         //Number - The number of steps in a hard coded scale
-        scaleSteps : 14,
+        scaleSteps: 14,
         //Number - The value jump in the hard coded scale
-        scaleStepWidth : (maxVal-minVal)/12,
+        scaleStepWidth: (maxVal - minVal) / 12,
         //Number - The scale starting value
-        scaleStartValue : minVal-20,
+        scaleStartValue: minVal - 20,
         //String - Colour of the scale line
-        scaleLineColor : "rgba(20,20,20,.7)",
+        scaleLineColor: "rgba(20,20,20,.7)",
 
         //Number - Pixel width of the scale line
-        scaleLineWidth : 1,
+        scaleLineWidth: 1,
 
         //Boolean - Whether to show labels on the scale
-        scaleShowLabels : true,
+        scaleShowLabels: true,
 
         //Interpolated JS string - can access value
-        scaleLabel : "<%=value%>",
+        scaleLabel: "<%=value%>",
 
         //String - Scale label font declaration for the scale label
-        scaleFontFamily : "'Arial'",
+        scaleFontFamily: "'Arial'",
 
         //Number - Scale label font size in pixels
-        scaleFontSize : 12,
+        scaleFontSize: 12,
 
         //String - Scale label font weight style
-        scaleFontStyle : "normal",
+        scaleFontStyle: "normal",
 
         //String - Scale label font colour
-        scaleFontColor : "#666",
+        scaleFontColor: "#666",
 
         ///Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines : true,
+        scaleShowGridLines: true,
 
         //String - Colour of the grid lines
-        scaleGridLineColor : "rgba(0,0,0,.3)",
+        scaleGridLineColor: "rgba(0,0,0,.3)",
 
         //Number - Width of the grid lines
-        scaleGridLineWidth : 1,
+        scaleGridLineWidth: 1,
 
         //Boolean - Whether the line is curved between points
-        bezierCurve : true,
+        bezierCurve: true,
 
         //Boolean - Whether to show a dot for each point
-        pointDot : true,
+        pointDot: true,
 
         //Number - Radius of each point dot in pixels
-        pointDotRadius : 5,
+        pointDotRadius: 5,
 
         //Number - Pixel width of point dot stroke
-        pointDotStrokeWidth : 1,
+        pointDotStrokeWidth: 1,
 
         //Boolean - Whether to show a stroke for datasets
-        datasetStroke : true,
+        datasetStroke: true,
 
         //Number - Pixel width of dataset stroke
-        datasetStrokeWidth : 2,
+        datasetStrokeWidth: 2,
 
         //Boolean - Whether to fill the dataset with a colour
-        datasetFill : true
+        datasetFill: true
     };
 
 
@@ -201,19 +202,19 @@
     var ctx = $("#requests").get(0).getContext("2d");
 
 
-    new Chart(ctx).Line(data,options);
+    new Chart(ctx).Line(data, options);
 
     //END of 1st chart settings
 
     //SECOND chart
 
     var allLikeVal = [
-    {% for answer in answers %}
-    {{answer.likes_count}},
-    {% endfor %}
-    {% for answer in answers %}
-    {{answer.dislikes_count}},
-    {% endfor %}
+        {% for answer in answers %}
+            {{answer.likes_count}},
+        {% endfor %}
+        {% for answer in answers %}
+            {{answer.dislikes_count}},
+        {% endfor %}
     ];
 
     var maxLikeVal = Math.max.apply(Math, allLikeVal),
@@ -223,102 +224,102 @@
 
 
     var data2 = {
-        labels : [
+        labels: [
             {% for answer in answers %}
                 "{{answer.keyword}}",
             {% endfor %}
         ],
-        datasets : {
-            fillColor : "rgba(100,233,79,0.5)",
-                strokeColor : "rgba(82,75,25,1)",
-                pointColor : "rgba(100,152,51,1)",
-                pointStrokeColor : "#fff",
-                label : 'likes',
-                data :  [
-            {% for answer in answers %}
-                "{{answer.likes_count}}",
+        datasets: {
+            fillColor: "rgba(100,233,79,0.5)",
+            strokeColor: "rgba(82,75,25,1)",
+            pointColor: "rgba(100,152,51,1)",
+            pointStrokeColor: "#fff",
+            label: 'likes',
+            data: [
+                {% for answer in answers %}
+                    "{{answer.likes_count}}",
                 {% endfor %}
-                ]
+            ]
         }
     };
     var options2 = {
 
         //Boolean - If we show the scale above the chart data
-        scaleOverlay : false,
+        scaleOverlay: false,
 
         //Boolean - If we want to override with a hard coded scale
-        scaleOverride : true,
+        scaleOverride: true,
 
         //** Required if scaleOverride is true **
         //Number - The number of steps in a hard coded scale
-        scaleSteps : 14,
+        scaleSteps: 14,
         //Number - The value jump in the hard coded scale
-        scaleStepWidth : (maxLikeVal-minLikeVal)/12,
+        scaleStepWidth: (maxLikeVal - minLikeVal) / 12,
         //Number - The scale starting value
-        scaleStartValue : minLikeVal-20,
+        scaleStartValue: minLikeVal - 20,
         //String - Colour of the scale line
-        scaleLineColor : "rgba(20,20,20,.7)",
+        scaleLineColor: "rgba(20,20,20,.7)",
 
         //Number - Pixel width of the scale line
-        scaleLineWidth : 1,
+        scaleLineWidth: 1,
 
         //Boolean - Whether to show labels on the scale
-        scaleShowLabels : true,
+        scaleShowLabels: true,
 
         //Interpolated JS string - can access value
-        scaleLabel : "<%=value%>",
+        scaleLabel: "<%=value%>",
 
         //String - Scale label font declaration for the scale label
-        scaleFontFamily : "'Arial'",
+        scaleFontFamily: "'Arial'",
 
         //Number - Scale label font size in pixels
-        scaleFontSize : 12,
+        scaleFontSize: 12,
 
         //String - Scale label font weight style
-        scaleFontStyle : "normal",
+        scaleFontStyle: "normal",
 
         //String - Scale label font colour
-        scaleFontColor : "#666",
+        scaleFontColor: "#666",
 
         ///Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines : true,
+        scaleShowGridLines: true,
 
         //String - Colour of the grid lines
-        scaleGridLineColor : "rgba(0,0,0,.3)",
+        scaleGridLineColor: "rgba(0,0,0,.3)",
 
         //Number - Width of the grid lines
-        scaleGridLineWidth : 1,
+        scaleGridLineWidth: 1,
 
         //Boolean - Whether the line is curved between points
-        bezierCurve : true,
+        bezierCurve: true,
 
         //Boolean - Whether to show a dot for each point
-        pointDot : true,
+        pointDot: true,
 
         //Number - Radius of each point dot in pixels
-        pointDotRadius : 5,
+        pointDotRadius: 5,
 
         //Number - Pixel width of point dot stroke
-        pointDotStrokeWidth : 1,
+        pointDotStrokeWidth: 1,
 
         //Boolean - Whether to show a stroke for datasets
-        datasetStroke : true,
+        datasetStroke: true,
 
         //Number - Pixel width of dataset stroke
-        datasetStrokeWidth : 2,
+        datasetStrokeWidth: 2,
 
         //Boolean - Whether to fill the dataset with a colour
-        datasetFill : true
+        datasetFill: true
     };
 
     var ctx = $("#likes").get(0).getContext("2d");
 
 
-    new Chart(ctx).Line(data2,options2);
+    new Chart(ctx).Line(data2, options2);
     //END of 2nd chart settings
 
 
-    $(function() {
+    $(function () {
 
         var rooms = [
             {% for room in rooms %}
@@ -326,7 +327,7 @@
             {% endfor %}
         ];
 
-        for (var i=0; i < rooms.length; i++) {
+        for (var i = 0; i < rooms.length; i++) {
 
             var option = document.createElement('option');
             option.setAttribute('value', rooms[i][1]);
@@ -336,12 +337,14 @@
 
         }
 
-        $('button').on('click', function(e){
+        $('button').on('click', function (e) {
 
             var datalist = document.getElementById('room_name'),
                 inputVal = document.querySelector('input').value;
-
-            window.location.href='/hip-help/summary/' + inputVal;
+            if (inputVal)
+                window.location.href = '/hip-help/summary/' + inputVal;
+            else
+                window.location.reload();
         })
     })
 
